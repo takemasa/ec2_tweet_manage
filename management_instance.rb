@@ -21,7 +21,7 @@ ec2.instances.each do |instance|
   end
 end
 
-etl.start #etlインスタンスの起動中にcronで設定された処理が行われる
+etl.start if etl && etl.status == :stopped # etlインスタンスの起動中にcronで設定された処理が行われる
 nat_tmp.start
 sleep(5*60)
 # ルートテーブルをnatからnat_tmpに付け替え
@@ -33,5 +33,7 @@ sleep(5*60)
 # natの再起動後にルートテーブルを戻すとIPアドレスが変わる
 ec2.client.replace_route(:route_table_id => 'rtb-cd593ba5', :destination_cidr_block => '0.0.0.0/0', :instance_id=>"#{nat.id}")
 nat_tmp.stop
-sleep(60*60)
-etl.stop
+if etl && etl.status == :running
+  sleep(60*60)
+  etl.stop
+end
