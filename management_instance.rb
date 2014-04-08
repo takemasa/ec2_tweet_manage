@@ -21,6 +21,7 @@ ec2.instances.each do |instance|
   end
 end
 
+puts "start #{Time.now}"
 etl.start if etl && etl.status == :stopped # etlインスタンスの起動中にcronで設定された処理が行われる
 nat_tmp.start
 sleep(5*60)
@@ -34,6 +35,8 @@ sleep(5*60)
 ec2.client.replace_route(:route_table_id => 'rtb-cd593ba5', :destination_cidr_block => '0.0.0.0/0', :instance_id=>"#{nat.id}")
 nat_tmp.stop
 if etl && etl.status == :running
+  puts "etl_proccess #{Time.now}"
   sleep(60*60)
   etl.stop
 end
+puts "end #{Time.now}"
