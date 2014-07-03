@@ -36,7 +36,7 @@ ec2.client.replace_route(:route_table_id => 'rtb-cd593ba5', :destination_cidr_bl
 nat_tmp.stop
 if etl && etl.status == :running
   puts "etl_proccess #{Time.now}"
-  sleep(60*60)
+  sleep(60*60*3)
   etl.stop
 end
 puts "end #{Time.now}"
